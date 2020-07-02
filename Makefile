@@ -1,5 +1,5 @@
 config ?= release
-
+# ssl=1.1.x
 PACKAGE := crypto
 GET_DEPENDENCIES_WITH := corral fetch
 CLEAN_DEPENDENCIES_WITH := corral clean
@@ -29,7 +29,8 @@ ifeq (,$(filter $(MAKECMDGOALS),clean docs realclean TAGS))
   else ifeq ($(ssl), 0.9.0)
 	  SSL = -Dopenssl_0.9.0
   else
-    $(error Unknown SSL version "$(ssl)". Must set using 'ssl=1.1.x' or 'ssl=0.9.0')
+    # $(error Unknown SSL version "$(ssl)". Must set using 'ssl=1.1.x' or 'ssl=0.9.0')
+    SSL = -Dopenssl_1.1.x
   endif
 endif
 
@@ -47,7 +48,11 @@ $(tests_binary): $(GEN_FILES) $(SOURCE_FILES) | $(BUILD_DIR)
 	$(GET_DEPENDENCIES_WITH)
 	$(PONYC) $(SSL) -o $(BUILD_DIR) $(SRC_DIR)
 
-build-examples: $(EXAMPLES_BINARIES)
+$(LIBS): 
+	clang -g -Wall -c $(SRC_DIR)/encoding.c -o $(BUILD_DIR)/encoding.o
+	ar rv $(BUILD_DIR)/libencoding.a $(BUILD_DIR)/encoding.o
+
+build-examples: $(LIBS) $(EXAMPLES_BINARIES)
 
 $(EXAMPLES_BINARIES): $(BUILD_DIR)/%: $(SOURCE_FILES) $(EXAMPLES_SOURCE_FILES) | $(BUILD_DIR)
 	$(GET_DEPENDENCIES_WITH)

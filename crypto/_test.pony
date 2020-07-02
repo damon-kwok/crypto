@@ -15,6 +15,7 @@ actor Main is TestList
     test(_TestSHA384)
     test(_TestSHA512)
     test(_TestDigest)
+    test(_TestBase64)
 
 class iso _TestConstantTimeCompare is UnitTest
   fun name(): String => "crypto/ConstantTimeCompare"
@@ -122,3 +123,12 @@ class iso _TestDigest is UnitTest
       "ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db2" +
       "7ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff",
       ToHexString(d'.final()))
+
+class iso _TestBase64 is UnitTest
+  fun name(): String => "encoding/Base64"
+
+  fun apply(h: TestHelper) =>
+    let s1 = "this is a example"
+    let s2 = Base64.encode(s1)
+    h.log("s2:"+s2)
+    h.assert_true((s2 == "ZW5jb2RpbmcvQmFzZTY0"))

@@ -1,5 +1,5 @@
-use "path:/usr/local/opt/libressl/lib" if osx
-use "lib:crypto"
+// use "path:/usr/local/opt/libressl/lib" if osx
+// use "lib:crypto"
 
 primitive _EVPMD
 primitive _EVPCTX
