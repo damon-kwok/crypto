@@ -118,6 +118,48 @@ primitive SHA512 is HashFn
       Array[U8].from_cpointer(digest, size)
     end
 
+primitive SHAKE128 is HashFn
+  fun tag apply(input: ByteSeq): Array[U8] val =>
+    """
+    Compute the SHAKE128 message digest conforming to RFC 1320
+    """
+    ifdef "openssl_1.1.x" then
+      let size: USize = 16
+      let ctx = @EVP_MD_CTX_new[Pointer[_EVPCTX]]()
+      @EVP_DigestInit_ex[None](ctx, @EVP_shake128[Pointer[_EVPMD]](), USize(0))
+      @EVP_DigestUpdate[None](ctx, input.cpointer(), input.size())
+      let digest =
+        recover String.from_cpointer(
+          @pony_alloc[Pointer[U8]](@ponyctx[Pointer[None] iso](), size), size)
+        end
+      @EVP_DigestFinal_ex[None](ctx, digest.cpointer(), Pointer[USize])
+      @EVP_MD_CTX_free[None](ctx)
+      (consume digest).array()
+    else
+      compile_error "openssl_0.9.x dose not support shake128"
+    end
+
+primitive SHAKE256 is HashFn
+  fun tag apply(input: ByteSeq): Array[U8] val =>
+    """
+    Compute the SHAKE128 message digest conforming to RFC 1320
+    """
+    ifdef "openssl_1.1.x" then
+      let size: USize = 32
+      let ctx = @EVP_MD_CTX_new[Pointer[_EVPCTX]]()
+      @EVP_DigestInit_ex[None](ctx, @EVP_shake256[Pointer[_EVPMD]](), USize(0))
+      @EVP_DigestUpdate[None](ctx, input.cpointer(), input.size())
+      let digest =
+        recover String.from_cpointer(
+          @pony_alloc[Pointer[U8]](@ponyctx[Pointer[None] iso](), size), size)
+        end
+      @EVP_DigestFinal_ex[None](ctx, digest.cpointer(), Pointer[USize])
+      @EVP_MD_CTX_free[None](ctx)
+      (consume digest).array()
+    else
+      compile_error "openssl_0.9.x dose not support shake256"
+    end
+
 primitive ToHexString
   fun tag apply(bs: Array[U8] val): String =>
     """

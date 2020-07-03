@@ -14,6 +14,7 @@ actor Main is TestList
     test(_TestSHA256)
     test(_TestSHA384)
     test(_TestSHA512)
+    test(_TestSHAKE256)
     test(_TestDigest)
 
 class iso _TestConstantTimeCompare is UnitTest
@@ -101,6 +102,14 @@ class iso _TestSHA512 is UnitTest
       "ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db2" +
       "7ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff",
       ToHexString(SHA512("test")))
+
+class iso _TestSHAKE256 is UnitTest
+  fun name(): String => "crypto/SHAKE256"
+
+  fun apply(h: TestHelper) =>
+    h.assert_eq[String](
+      "b54ff7255705a71ee2925e4a3e30e41aed489a579d5595e0df13e32e1e4dd202",
+      ToHexString(SHAKE256("test")))
 
 class iso _TestDigest is UnitTest
   fun name(): String => "crypto/Digest"
